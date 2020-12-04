@@ -1,6 +1,6 @@
 [Project]
-FileName=game.dev
-Name=Projeto1
+FileName=Game.dev
+Name=Game
 UnitCount=1
 Type=0
 Ver=1
@@ -10,11 +10,11 @@ Libs=
 PrivateResource=
 ResourceIncludes=
 MakeIncludes=
-Compiler=
-CppCompiler=
-Linker=-lalleg
-IsCpp=1
-Icon=game.ico
+Compiler=-DALLEGRO_STATICLINK
+CppCompiler=-DALLEGRO_STATICLINK
+Linker=-lalleg_s -lkernel32 -luser32 -lgdi32 -lcomdlg32 -lole32 -ldinput -lddraw -ldxguid -lwinmm -ldsound
+IsCpp=0
+Icon=Game.ico
 ExeOutput=
 ObjectOutput=
 OverrideOutput=0
@@ -30,8 +30,8 @@ CompilerSet=0
 CompilerSettings=
 
 [Unit1]
-FileName=main.cpp
-CompileCpp=1
+FileName=main.c
+CompileCpp=0
 Folder=
 Compile=1
 Link=1
