@@ -4,6 +4,8 @@
 void sair();
 void pause();
 void control(); 
+void mapa();
+void blocos();
 int colidir(int Ax, int Ay, int Bx, int By, int Aw, int Ah, int Bw, int Bh);
 
 
@@ -26,11 +28,12 @@ int vly = 0;
 int vup = 15;
 int grv = 4;
 int width = 900;
-int height = 720;
+int height = 600;
 int nTile=0;
 int caindo = 1;
 int pulando = 0;
 int pLimit = 0;
+char mp[13][15];
 
 BITMAP *buffer, *imagem, *piso;
 
@@ -54,7 +57,7 @@ int main() {
 	//Alimanhamento da matriz
 	for(i=0; i<13; i++){
 		for(j=0; j<15; j++){
-			bloco[i][j].y = 400;
+			bloco[i][j].y = 500;
 			bloco[i][j].x = j*60;
 			bloco[i][j].w = 60;
 			bloco[i][j].h = 50;
@@ -73,19 +76,20 @@ int main() {
 		}
 		
 		control();
-		for(i=0; i<13; i++){
+		blocos();
+		/*for(i=0; i<13; i++){
 			for(j=0; j<10; j++){
 				masked_blit(piso, buffer, bloco[i][j].wx, bloco[i][j].wy, bloco[i][j].x, bloco[i][j].y, bloco[i][j].w, bloco[i][j].h);
-				if (colidir(p.x+10, p.y+50, bloco[i][j].x, bloco[i][j].y, 34, 40, bloco[i][j].w, 10)){
+				if (colidir(p.x+10, p.y+25, bloco[i][j].x, bloco[i][j].y, 34, 40, bloco[i][j].w, 10)){
 					p.y = bloco[i][j].y - p.h;
 					caindo = 0;
 				}
 			}
-		}
+		}*/
 		
 		masked_blit(imagem, buffer, p.wx + nTile*50, p.wy + dir*50, p.x, p.y, p.w, p.h);
 		//masked_blit(imagem, buffer, p.wx, p.wy, p.x, p.y, p.w, p.h);
-		rectfill(buffer, 0, 650, width, height, 0xfeebbf);
+		rectfill(buffer, 0, 550, width, height, 0xfeebbf);
 		draw_sprite(screen, buffer, 0, 0);
 		pause();
 		rest(50);
@@ -96,7 +100,7 @@ int main() {
 	//Finalização
 	destroy_bitmap(buffer);
 	destroy_bitmap(imagem);
-	//destroy_sample(sPause);
+	destroy_sample(sPause);
 
 	return 0;
 }
@@ -110,19 +114,32 @@ void pause(){
 	while(key[KEY_P] && pausa);
 	while(!key[KEY_P] && pausa && !(sai || key[KEY_ESC]));
 	pausa = 0;
-	while(key[KEY_P && !pausa]);
+	while(key[KEY_P] && !pausa);
 }
 
 void control(){
+	
 	if(key[KEY_SPACE] && !pulando && !vly){
 		pLimit = p.y;
 		pulando = 1;
 	}
-	
-	if(key[KEY_UP]){p.y-=10; dir = 3; nTile++;}
-	else if(key[KEY_RIGHT]){p.x+=10; dir = 2; nTile++;}
+		
+	if(key[KEY_UP]){
+		if(key[KEY_UP] && key[KEY_RIGHT]){
+			p.x+=10; dir = 2; nTile++;
+		}else if(key[KEY_UP] && key[KEY_LEFT]){
+			p.x-=10; dir = 1; nTile++;
+		}else{
+			dir = 3; nTile++;
+		}
+		p.y-=10;
+		//p.y-=10; dir = 3; nTile++;
+	}else if(key[KEY_RIGHT]){p.x+=10; dir = 2; nTile++;}
 	else if(key[KEY_LEFT]){p.x-=10; dir = 1; nTile++;}
-	else if(key[KEY_DOWN]){p.y+=10; dir = 0; nTile++;}
+	else if(key[KEY_DOWN]){
+		dir = 0; nTile++;
+		//p.y+=10; dir = 0; nTile++;
+	}
 	else nTile = 1;
 	if(nTile < 0) nTile = 2;
 	if(nTile > 2) nTile =0;
@@ -142,8 +159,50 @@ void control(){
 	caindo = 1;
 }
 
+void mapa(){
+	int i, j;											//15
+	char map[13][15] = {{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+						{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+						{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+						{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+						{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+						{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+						{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+						{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+						{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+						{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+						{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+						{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+						{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+						{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},} //13
+						
+	for(i=0; i<13; i++){
+		for(j=0; j<15; j++){
+			if(map[i][j]) bloco[i][j].wx = (map[i][j]-1)*bloco[i][j].w;
+			else bloco[i][j].x = out;
+			mp[i][j] = map[i][j];
+		}
+	}
+}
+
+void blocos(){
+	int i, j;
+	
+	for(i=0; i<13; i++){
+		for(j=0; j<15; j++){
+			if (colidir(p.x+10, p.y+25, bloco[i][j].x, bloco[i][j].y, 34, 40, bloco[i][j].w, 10)){
+				if(mp[i][j] != 6 && mp[i][j] != 8){
+					caindo = 0;
+					p.y = bloco[i][j].y - p.h;
+				}
+			}
+			masked_blit(piso, buffer, bloco[i][j].wx, bloco[i][j].wy, bloco[i][j].x, bloco[i][j].y, bloco[i][j].w, bloco[i][j].h);
+		}
+	}
+}
+
 int colidir(int Ax, int Ay, int Bx, int By, int Aw, int Ah, int Bw, int Bh){
 	if(Ax + Aw > Bx && Ax < Bx + Bw && Ay + Ah > By && Ay < By + Bh)
-	return 1;
+		return 1;
 	return 0;
 }
